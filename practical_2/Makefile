@@ -38,5 +38,5 @@ direct:
 		--ascii tree --max-depth 1 --no-config
 
 clean:
-	rm -rf $(DEMO_DIR)
+	rm -rf $(DEMO_DIR) .test-tmp
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +
