@@ -1,0 +1,9 @@
+# Graph with two cycles and one self-loop.
+# A -> B -> D -> A is a three-package cycle.
+# C <-> E is a two-package cycle.
+A: B C
+B: D
+C: E
+D: A
+E: C
+SELF: SELF

@@ -1,0 +1,7 @@
+# Filtering demo: the X* branch is skipped when --filter X is used.
+A: B X1
+B: C
+C: D
+X1: X2
+X2: D
+D:
