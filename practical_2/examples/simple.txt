@@ -1,0 +1,7 @@
+# Simple acyclic graph used by the stage 2 and stage 5 demos.
+A: B C
+B: D
+C: D E
+D: F
+E: F
+F:

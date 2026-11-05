@@ -1,6 +1,31 @@
+# Python bytecode and caches
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
 .venv/
+venv/
+
+# Generated artifacts
+out/
+build/
+dist/
+*.dot
+*.log
+
+# Editor and OS files
 .vscode/
 .idea/
-*.log
+*.swp
+.DS_Store
+
+# Assignment source documents
+*.pdf
+*.docx
+
+# Generated demo images and Cargo build files
+*.svg
+examples/cargo-project/target/
+examples/cargo-project/Cargo.lock

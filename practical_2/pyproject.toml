@@ -1,0 +1,15 @@
+[project]
+name = "cargo-deps-graph"
+version = "1.0.0"
+description = "Dependency graph visualizer for Rust Cargo packages"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+cargo-deps = "cargo_deps.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
