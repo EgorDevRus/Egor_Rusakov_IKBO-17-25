@@ -1,6 +1,35 @@
+# Байт-код и кэш Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Виртуальные окружения
 .venv/
+venv/
+
+# Сгенерированные артефакты
+out/
+build/
+dist/
+*.dot
+*.log
+
+# Файлы редакторов и операционной системы
 .vscode/
 .idea/
-*.log
+*.swp
+.DS_Store
+
+# Исходные документы задания
+*.pdf
+*.docx
+
+# Сгенерированные изображения и файлы сборки
+*.svg
+
+# Временные каталоги проверки через nix-shell
+.nix-tmp/
+.nix-cache/
+.cargo-home/
+.cargo-target/
