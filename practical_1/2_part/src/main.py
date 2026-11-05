@@ -1,8 +1,9 @@
-"""Точка входа эмулятора оболочки второго этапа."""
+"""Точка входа эмулятора оболочки третьего этапа."""
 import sys
 
 from src.config import Config, parse_args
 from src.shell import ScriptError, Shell
+from src.vfs import VFS, VFSError
 
 
 def print_debug(config: Config) -> None:
@@ -12,11 +13,22 @@ def print_debug(config: Config) -> None:
     print(f"[DEBUG]   --script = {config.script_path}", flush=True)
 
 
+def load_vfs(config: Config) -> VFS:
+    """Загружает VFS из указанного в конфигурации файла."""
+    vfs = VFS()
+    try:
+        vfs.load_csv(config.vfs_path)
+    except (OSError, VFSError) as error:
+        print(f"Ошибка загрузки VFS: {error}", file=sys.stderr)
+        sys.exit(1)
+    return vfs
+
+
 def main() -> None:
-    """Выполняет стартовый скрипт, затем запускает REPL."""
+    """Загружает VFS, выполняет скрипт, затем запускает REPL."""
     config = parse_args()
     print_debug(config)
-    shell = Shell()
+    shell = Shell(load_vfs(config))
     try:
         shell.run_script(config.script_path)
     except ScriptError as error:

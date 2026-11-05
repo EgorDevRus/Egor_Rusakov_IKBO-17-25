@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Запуск с относительными путями к VFS и стартовому скрипту.
+# Полная VFS и относительные пути к файлам данных.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

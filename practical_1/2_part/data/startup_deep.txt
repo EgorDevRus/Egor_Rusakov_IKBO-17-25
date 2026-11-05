@@ -1,0 +1,18 @@
+# Глубокая VFS: не менее трёх уровней каталогов и файлов.
+
+ls
+cd /projects
+ls
+cd alpha
+ls
+cd src
+ls
+cd ..
+ls
+cd "docs"
+ls
+cd ../..
+ls
+cd /projects/alpha/src/main.py
+cd /projects/missing
+exit

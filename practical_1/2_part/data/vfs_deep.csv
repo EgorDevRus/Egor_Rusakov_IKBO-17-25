@@ -1,0 +1,10 @@
+path,type,content
+/projects,dir,
+/projects/alpha,dir,
+/projects/alpha/src,dir,
+/projects/alpha/src/main.py,file,cHJpbnQoJ2hpJykK
+/projects/alpha/src/utils.py,file,ZGVmIGhlbHAoKToK
+/projects/alpha/docs,dir,
+/projects/alpha/docs/guide.md,file,IyBHdWlkZQo=
+/projects/beta,dir,
+/projects/beta/readme.txt,file,QmV0YSByZWFkbWUK

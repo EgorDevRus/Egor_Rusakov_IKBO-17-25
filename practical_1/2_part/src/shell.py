@@ -1,15 +1,18 @@
-"""Оболочка с REPL, заглушками ls/cd и стартовым скриптом."""
+"""Оболочка с REPL, виртуальной ФС и командами ls, cd, exit."""
 import getpass
-import os
 import socket
 import sys
 from typing import Callable, Dict, List
 
 from src.parser import Command, ParseError, parse_input
+from src.vfs import VFS, VFSNode
 
 HOME_PREFIX = "~"
-NO_ARGUMENTS = "аргументов нет"
+PATH_SEPARATOR = "/"
 COMMENT_PREFIX = "#"
+DEFAULT_LS_PATH = "."
+MAX_LS_ARGUMENTS = 1
+MAX_CD_ARGUMENTS = 1
 
 
 class ScriptError(OSError):
@@ -17,23 +20,31 @@ class ScriptError(OSError):
 
 
 class Shell:
-    """Интерактивная оболочка второго этапа."""
+    """Интерактивная оболочка над виртуальной файловой системой."""
 
-    def __init__(self) -> None:
-        """Запоминает данные реальной ОС для приглашения."""
+    def __init__(self, vfs: VFS) -> None:
+        """Запоминает VFS и данные реальной ОС для приглашения."""
+        self.vfs = vfs
         self.running = True
         self.user = getpass.getuser()
         self.host = socket.gethostname()
 
     def get_prompt(self) -> str:
-        """Формирует приглашение на основе данных реальной ОС."""
-        current = os.getcwd()
-        home = os.path.expanduser("~")
+        """Формирует приглашение с реальными пользователем и хостом."""
+        return f"{self.user}@{self.host}:{self.get_display_path()}$ "
+
+    def get_display_path(self) -> str:
+        """Сокращает путь текущего каталога VFS до ~, если возможно."""
+        current = self.vfs.path_of(self.vfs.cwd)
+        home = self.vfs.path_of(self.vfs.home)
         if current == home:
-            current = HOME_PREFIX
-        elif current.startswith(home + os.sep):
-            current = HOME_PREFIX + current[len(home):]
-        return f"{self.user}@{self.host}:{current}$ "
+            return HOME_PREFIX
+        if home == PATH_SEPARATOR:
+            return current
+        prefix = home.rstrip(PATH_SEPARATOR) + PATH_SEPARATOR
+        if current.startswith(prefix):
+            return HOME_PREFIX + current[len(home):]
+        return current
 
     def run(self) -> None:
         """Запускает цикл чтения, разбора и выполнения команд."""
@@ -60,7 +71,7 @@ class Shell:
             self._run_script_line(line)
 
     def _run_script_line(self, line: str) -> None:
-        """Выполняет одну строку скрипта, пропуская пустые и комментарии."""
+        """Выполняет строку скрипта, пропуская пустые и комментарии."""
         command = line.rstrip("\r\n")
         if not command.strip():
             return
@@ -94,12 +105,43 @@ class Shell:
         handler(command.args)
 
     def _cmd_ls(self, args: List[str]) -> None:
-        """Заглушка ls: выводит имя команды и аргументы."""
-        self._print_stub("ls", args)
+        """Показывает содержимое каталога или имя файла."""
+        if len(args) > MAX_LS_ARGUMENTS:
+            self._error("ls: слишком много аргументов")
+            return
+        target = args[0] if args else DEFAULT_LS_PATH
+        try:
+            node = self.vfs.resolve(target)
+        except (FileNotFoundError, NotADirectoryError) as error:
+            self._error(f"ls: {error}")
+            return
+        if not node.is_dir:
+            print(node.name)
+            return
+        self._print_children(node)
+
+    def _print_children(self, node: VFSNode) -> None:
+        """Печатает отсортированное содержимое каталога."""
+        for name in sorted(node.children):
+            child = node.children[name]
+            suffix = PATH_SEPARATOR if child.is_dir else ""
+            print(f"{name}{suffix}")
 
     def _cmd_cd(self, args: List[str]) -> None:
-        """Заглушка cd: выводит имя команды и аргументы."""
-        self._print_stub("cd", args)
+        """Меняет текущий каталог VFS."""
+        if len(args) > MAX_CD_ARGUMENTS:
+            self._error("cd: слишком много аргументов")
+            return
+        target = args[0] if args else HOME_PREFIX
+        try:
+            node = self.vfs.resolve(target)
+        except (FileNotFoundError, NotADirectoryError) as error:
+            self._error(f"cd: {error}")
+            return
+        if not node.is_dir:
+            self._error(f"cd: не является каталогом: {target}")
+            return
+        self.vfs.cwd = node
 
     def _cmd_exit(self, args: List[str]) -> None:
         """Завершает работу оболочки."""
@@ -107,13 +149,6 @@ class Shell:
             self._error("exit: аргументы не поддерживаются")
             return
         self.running = False
-
-    def _print_stub(self, name: str, args: List[str]) -> None:
-        """Печатает имя команды и разобранные аргументы."""
-        if not args:
-            print(f"{name}: {NO_ARGUMENTS}")
-            return
-        print(f"{name}: аргументы: {args}")
 
     def _error(self, message: str) -> None:
         """Выводит ошибку в поток ошибок."""

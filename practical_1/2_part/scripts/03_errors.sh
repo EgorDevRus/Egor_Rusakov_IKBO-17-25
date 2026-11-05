@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Проверка обработки ошибок параметров командной строки и скрипта.
+# Проверка ошибок параметров, загрузки VFS и запуска скрипта.
 set -u
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -25,8 +25,13 @@ check_failure "не передан --vfs" \
 check_failure "не передан --script" \
     ./run.sh --vfs data/vfs_full.csv
 check_failure "неизвестный параметр" \
-    ./run.sh --vfs data/vfs_full.csv --script data/startup.txt --bad
-check_failure "файл скрипта не найден" \
+    ./run.sh --vfs data/vfs_full.csv \
+    --script data/startup.txt --bad
+check_failure "файл VFS не найден" \
+    ./run.sh --vfs data/missing.csv --script data/startup.txt
+check_failure "неверный формат VFS" \
+    ./run.sh --vfs data/vfs_invalid.csv --script data/startup.txt
+check_failure "скрипт не найден" \
     ./run.sh --vfs data/vfs_full.csv --script data/missing.txt
 
 echo "=== Проверка: корректный запуск ==="

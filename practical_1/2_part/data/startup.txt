@@ -1,12 +1,32 @@
-# Стартовый скрипт: комментарии начинаются с символа #.
-# Строки ниже демонстрируют парсер и команды-заглушки.
+# Полная VFS: несколько каталогов, файлы и глубина более трёх уровней.
+# Строки с ошибками показывают обработку неверных путей и команд.
 
 ls
-ls -l /tmp
-ls "файл с пробелом"
+ls /
+ls /home
+ls /home/user
+ls "/home/user"
 cd /home/user
-cd "папка с пробелом"
-cd
-ls -a
+ls
+cd docs
+ls
+cd reports
+ls
+cd ../../..
+ls
+cd ~
+ls
+cd /
+ls
+ls /etc
+cd /etc
+ls
+cd /var/log
+ls
+cd /nonexistent
+ls /nonexistent
+cd /etc/hosts
+ls /etc/hosts
+ls /etc /home
 unknown_command
 exit

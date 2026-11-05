@@ -1,0 +1,3 @@
+path,type,content
+/docs,dir,
+/docs/broken.txt,file,***not-base64***
