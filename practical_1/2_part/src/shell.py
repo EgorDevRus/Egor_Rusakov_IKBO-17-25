@@ -1,4 +1,4 @@
-"""Оболочка с REPL и командами-заглушками ls, cd, exit."""
+"""Оболочка с REPL, заглушками ls/cd и стартовым скриптом."""
 import getpass
 import os
 import socket
@@ -9,10 +9,15 @@ from src.parser import Command, ParseError, parse_input
 
 HOME_PREFIX = "~"
 NO_ARGUMENTS = "аргументов нет"
+COMMENT_PREFIX = "#"
+
+
+class ScriptError(OSError):
+    """Ошибка чтения стартового скрипта."""
 
 
 class Shell:
-    """Интерактивная оболочка первого этапа."""
+    """Интерактивная оболочка второго этапа."""
 
     def __init__(self) -> None:
         """Запоминает данные реальной ОС для приглашения."""
@@ -39,6 +44,30 @@ class Shell:
                 self._print_exit()
                 break
             self.execute_line(line)
+
+    def run_script(self, script_path: str) -> None:
+        """Выполняет стартовый скрипт, имитируя диалог с пользователем."""
+        try:
+            with open(script_path, "r", encoding="utf-8") as stream:
+                lines = stream.readlines()
+        except OSError as error:
+            raise ScriptError(
+                f"не удалось прочитать {script_path}: {error}"
+            ) from error
+        for line in lines:
+            if not self.running:
+                break
+            self._run_script_line(line)
+
+    def _run_script_line(self, line: str) -> None:
+        """Выполняет одну строку скрипта, пропуская пустые и комментарии."""
+        command = line.rstrip("\r\n")
+        if not command.strip():
+            return
+        if command.lstrip().startswith(COMMENT_PREFIX):
+            return
+        print(f"{self.get_prompt()}{command}", flush=True)
+        self.execute_line(command)
 
     def execute_line(self, line: str) -> None:
         """Разбирает и выполняет одну строку ввода."""

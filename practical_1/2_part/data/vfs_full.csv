@@ -1,0 +1,11 @@
+path,type,content
+/home,dir,
+/home/user,dir,
+/home/user/docs,dir,
+/home/user/docs/notes.txt,file,SGVsbG8gVkZTCg==
+/home/user/docs/reports,dir,
+/home/user/docs/reports/q1.txt,file,UTEgcmVwb3J0Cg==
+/home/user/image.png,file,iVBORw0KGgo=
+/etc,dir,
+/etc/hosts,file,MTI3LjAuMC4xIGxvY2FsaG9zdAo=
+/readme.txt,file,SGVsbG8sIFZGUyEK
