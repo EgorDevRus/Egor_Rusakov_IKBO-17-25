@@ -4,7 +4,7 @@ import io
 import shutil
 import tempfile
 import unittest
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as element_tree
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
@@ -51,7 +51,7 @@ class CliTest(unittest.TestCase):
         self.assertEqual(code, 0, stderr)
         self.assertTrue(self.output.exists())
         self.assertTrue(self.output.with_suffix(".dot").exists())
-        ET.parse(self.output)
+        element_tree.parse(self.output)
         self.assertIn("Параметры запуска:", stdout)
         self.assertIn("Граф: пакетов — 6", stdout)
 

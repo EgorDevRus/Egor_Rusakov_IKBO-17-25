@@ -5,7 +5,7 @@ import shutil
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as element_tree
 from pathlib import Path
 
 from cargo_deps.cli import run
@@ -39,7 +39,7 @@ class ExampleRepositoryTest(unittest.TestCase):
             with redirect_stderr(io.StringIO()):
                 code = run(arguments)
         self.assertEqual(code, 0)
-        ET.parse(output)
+        element_tree.parse(output)
         return output
 
     def test_simple_example(self):

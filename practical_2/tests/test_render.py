@@ -3,7 +3,7 @@
 import subprocess
 import tempfile
 import unittest
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as element_tree
 from pathlib import Path
 from unittest.mock import patch
 
@@ -117,7 +117,7 @@ class SvgRendererTest(unittest.TestCase):
         with patch("cargo_deps.render.svg.shutil.which", return_value=None):
             engine = write_svg("ignored", graph, self.output)
         self.assertEqual(engine, "встроенный")
-        ET.parse(self.output)
+        element_tree.parse(self.output)
         self.assertIn("Граф зависимостей: A", self.output.read_text())
 
     def test_fallback_escapes_xml(self):
@@ -126,7 +126,7 @@ class SvgRendererTest(unittest.TestCase):
         graph.add_node(GraphNode(ResolvedPackage("A&B"), 0, True))
         with patch("cargo_deps.render.svg.shutil.which", return_value=None):
             write_svg("ignored", graph, self.output)
-        ET.parse(self.output)
+        element_tree.parse(self.output)
 
     def test_graphviz_is_preferred(self):
         """Проверяет, что Graphviz используется при наличии."""
